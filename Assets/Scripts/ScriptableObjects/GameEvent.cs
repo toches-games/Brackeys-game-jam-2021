@@ -7,10 +7,10 @@ public class GameEvent : ScriptableObject
     private List<GameEventListener> listeners =
         new List<GameEventListener>();
 
-    public void Raise()
+    public void Raise(dynamic v)
     {
         for (int i = listeners.Count - 1; i >= 0; i--)
-            listeners[i].OnEventRaised();
+            listeners[i].OnEventRaised(v);
     }
 
     public void RegisterListener(GameEventListener listener)
