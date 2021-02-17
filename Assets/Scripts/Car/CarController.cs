@@ -7,6 +7,7 @@ public class CarController : MonoBehaviour {
     [SerializeField] private float deceleration = 1f;
     [SerializeField] private float gravityScale = 1f;
     [SerializeField] private Rigidbody rig = default;
+    [SerializeField] private WheelCollider[] wheels;
 
     private float currentAcceleration = 0f;
 
@@ -16,6 +17,25 @@ public class CarController : MonoBehaviour {
             yield return new WaitForSeconds(3);
             currentAcceleration += acceleration;
         }
+    }
+
+    private void UpdateWheels() {
+        foreach (WheelCollider wheel in wheels)
+        {
+            ApplyLocalPositionToVisuals(wheel);
+        }
+    }
+
+    private void ApplyLocalPositionToVisuals(WheelCollider collider)
+    {
+        Transform visualWheel = collider.transform.GetChild(0);
+     
+        Vector3 position;
+        Quaternion rotation;
+        collider.GetWorldPose(out position, out rotation);
+     
+        visualWheel.transform.position = position;
+        visualWheel.transform.rotation = rotation;
     }
 
     private void SubtractAcceleration() {
@@ -32,7 +52,13 @@ public class CarController : MonoBehaviour {
         Vector3 vertical = transform.forward * currentAcceleration;
         Vector2 horizontalVelocity = new Vector2(rig.velocity.x, rig.velocity.z);
 
-        rig.velocity = new Vector3(0, rig.velocity.y, currentAcceleration);
+        if(rig.velocity.y >= 0f) {
+            rig.velocity = new Vector3(0, rig.velocity.y, currentAcceleration);
+        }
+
+        else {
+            rig.velocity = new Vector3(0, rig.velocity.y, rig.velocity.z);
+        }
     }
 
     private void Update() {
@@ -42,5 +68,8 @@ public class CarController : MonoBehaviour {
     private void FixedUpdate() {
         Movement();
         Gravity();
+        //UpdateWheels();
+
+        print(rig.velocity);
     }
 }
