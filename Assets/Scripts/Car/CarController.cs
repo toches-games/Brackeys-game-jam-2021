@@ -3,73 +3,106 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class CarController : MonoBehaviour {
-    [SerializeField] private float acceleration = 10f;
-    [SerializeField] private float deceleration = 1f;
-    [SerializeField] private float gravityScale = 1f;
+    [SerializeField] private Vector3 visualVelocity;
+    [SerializeField] private float limitVelocity;
+    [SerializeField] private float time;
+    [SerializeField] private float pushAcceleration;
+
+    [SerializeField] private float currentAcceleration;
+    [SerializeField] private float forceForCorrect;
+    [SerializeField] private float forceForIncorrect;
+    [SerializeField] private float forceForPlus;
+    [SerializeField] private float targetAcceleration;
+    [SerializeField] private float percentForAerodynamicsDeceleration;
     [SerializeField] private Rigidbody rig = default;
-    [SerializeField] private WheelCollider[] wheels;
 
-    private float currentAcceleration = 0f;
+    private const float MAX_VELOCITY = 5f;
+    private const float MAX_PUSH_ACCELERATION = 1500f;
+    private const float INIT_PUSH_ACCELERATION = 300f;
+    private bool changeForce = true;
 
-    // Test
-    IEnumerator Start() {
-        while(true) {
-            yield return new WaitForSeconds(3);
-            currentAcceleration += acceleration;
-        }
-    }
-
-    private void UpdateWheels() {
-        foreach (WheelCollider wheel in wheels)
-        {
-            ApplyLocalPositionToVisuals(wheel);
-        }
-    }
-
-    private void ApplyLocalPositionToVisuals(WheelCollider collider)
+    IEnumerator Start()
     {
-        Transform visualWheel = collider.transform.GetChild(0);
-     
-        Vector3 position;
-        Quaternion rotation;
-        collider.GetWorldPose(out position, out rotation);
-     
-        visualWheel.transform.position = position;
-        visualWheel.transform.rotation = rotation;
-    }
+        while (true)
+        {
+            if(rig.velocity.z < limitVelocity)
+            {
+                AddForceZ(pushAcceleration);
+            }
 
-    private void SubtractAcceleration() {
-        if(currentAcceleration > 0) {
-            currentAcceleration -= deceleration * Time.deltaTime;
+            yield return new WaitForSeconds(time);
         }
     }
 
-    private void Gravity() {
-        rig.AddForce(Vector3.down * 9.8f * gravityScale, ForceMode.Acceleration);
+    private void SubtractAerodynamicsAcceleration() {
+        if(rig.velocity.z > 0) {
+            
+            rig.AddRelativeForce(transform.forward * -1 * rig.velocity.z 
+                    * percentForAerodynamicsDeceleration, ForceMode.Force);
+        }
     }
 
-    private void Movement() {
-        Vector3 vertical = transform.forward * currentAcceleration;
-        Vector2 horizontalVelocity = new Vector2(rig.velocity.x, rig.velocity.z);
-
-        if(rig.velocity.y >= 0f) {
-            rig.velocity = new Vector3(0, rig.velocity.y, currentAcceleration);
-        }
-
-        else {
-            rig.velocity = new Vector3(0, rig.velocity.y, rig.velocity.z);
-        }
+    private void AddForceZ(float v)
+    {
+        rig.AddRelativeForce(transform.forward * v, ForceMode.Force);
     }
 
     private void Update() {
-        SubtractAcceleration();
+
+        SubtractAerodynamicsAcceleration();
+        visualVelocity = rig.velocity;
+
+        if(transform.rotation.x < -0.05f && changeForce)
+        {
+            
+            changeForce = false;
+        }
+        else if(transform.rotation.x > -0.1)
+        {
+            changeForce = true;
+
+        }
+
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            limitVelocity += forceForPlus;
+
+        }
+        else if (Input.GetKeyDown(KeyCode.C))
+        {
+            if (transform.rotation.x < -0.05f)
+            {
+                pushAcceleration += 50f;
+            }
+            else if(limitVelocity < MAX_VELOCITY && rig.velocity.z > limitVelocity - 1.5f)
+            {
+                limitVelocity += forceForCorrect;
+
+            }
+            else
+            {
+                pushAcceleration += 20f;
+
+            }
+
+            if(pushAcceleration >= MAX_PUSH_ACCELERATION)
+            {
+                if (!changeForce)
+                {
+
+                    pushAcceleration = MAX_PUSH_ACCELERATION;
+                }
+                else
+                {
+                    pushAcceleration /= 1.5f;
+                }
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.I))
+        {
+            limitVelocity += forceForIncorrect;
+        }
+
     }
 
-    private void FixedUpdate() {
-        Movement();
-        Gravity();
-        //UpdateWheels();
-
-        print(rig.velocity);
-    }
 }
