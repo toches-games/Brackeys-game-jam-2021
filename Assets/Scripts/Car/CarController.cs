@@ -11,7 +11,7 @@ public class CarController : MonoBehaviour {
     [SerializeField] private Rigidbody rig = default;
 
     private float timeOfResponse;
-    public float MAX_VELOCITY = 5f;
+    public float MAX_VELOCITY;
     public float MAX_PUSH_ACCELERATION = 1500f;
     public float INIT_PUSH_ACCELERATION = 200f;
     private bool changeForce = true;
@@ -54,7 +54,10 @@ public class CarController : MonoBehaviour {
 
         if(transform.rotation.x < -0.05f && changeForce)
         {
-            
+            if(pushAcceleration >= 1000)
+            {
+                pushAcceleration -= pushAcceleration / 2.5f;
+            }
             changeForce = false;
         }
         else if(transform.rotation.x > -0.1)
@@ -63,19 +66,6 @@ public class CarController : MonoBehaviour {
 
         }
 
-        //if (Input.GetKeyDown(KeyCode.X))
-        //{
-        //    limitVelocity += forceForPlus;
-
-        //}
-        //else if (Input.GetKeyDown(KeyCode.C))
-        //{
-            
-        //}
-        //else if (Input.GetKeyDown(KeyCode.I))
-        //{
-        //    limitVelocity += forceForIncorrect;
-        //}
     }
 
     public void ApplyForce(float pushForStraigh, float pushForUphill, float pushLimit)
@@ -108,6 +98,4 @@ public class CarController : MonoBehaviour {
             }
         }
     }
-
-    
 }

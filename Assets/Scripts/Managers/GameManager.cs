@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     private float timeOfCreateButtonRefer;
     private int timeForButtonRefer;
     private bool endGame = false;
+    private int plusCount = 0;
 
     private void Awake()
     {
@@ -110,6 +111,7 @@ public class GameManager : MonoBehaviour
 
     public void CalculateForce(dynamic time)
     {
+        float pushForStraigh = 0, pushForUphill = 0, pushLimit = 0;
         switch (currentDifficulty)
         {
             case Difficulty.easy:
@@ -124,19 +126,34 @@ public class GameManager : MonoBehaviour
 
                     case float n when (time > 0 && time <= timeForButtonRefer/10):
 
-                        carController.ApplyForce(100f, 200f, 3);
+                        pushForStraigh = 100f;
+                        pushForUphill = 200f;
+                        pushLimit = 3;
+                        plusCount++;
 
+                        if(plusCount >= 4)
+                        {
+                            pushForStraigh = 400f;
+                            pushForUphill = 500f;
+                            //Code animation plus count
+                            plusCount = 0;
+                            Debug.Log("START PLUS");
+                        }
                         break;
 
                     case float n when (time > timeForButtonRefer / 10 && time <= timeForButtonRefer / 3):
 
-                        carController.ApplyForce(50f, 100f, 3);
+                        pushForStraigh = 50f;
+                        pushForUphill = 100f;
+                        pushLimit = 3;
 
                         break;
 
                     case var n when (time > timeForButtonRefer / 3 || time == -1):
 
-                        carController.ApplyForce(-100f, -100f, 0);
+                        pushForStraigh = -100f;
+                        pushForUphill = -150f;
+                        pushLimit = 0;
 
                         break;
                     default:
@@ -163,6 +180,7 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
+        carController.ApplyForce(pushForStraigh, pushForUphill, pushLimit);
 
     }
 
