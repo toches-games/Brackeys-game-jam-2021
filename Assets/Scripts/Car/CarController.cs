@@ -7,19 +7,19 @@ public class CarController : MonoBehaviour {
     [SerializeField] private float limitVelocity;
     [SerializeField] private float time;
     [SerializeField] private float pushAcceleration;
-
-    [SerializeField] private float currentAcceleration;
-    [SerializeField] private float forceForCorrect;
-    [SerializeField] private float forceForIncorrect;
-    [SerializeField] private float forceForPlus;
-    [SerializeField] private float targetAcceleration;
     [SerializeField] private float percentForAerodynamicsDeceleration;
     [SerializeField] private Rigidbody rig = default;
 
-    private const float MAX_VELOCITY = 5f;
-    private const float MAX_PUSH_ACCELERATION = 1500f;
-    private const float INIT_PUSH_ACCELERATION = 300f;
+    private float timeOfResponse;
+    public float MAX_VELOCITY = 5f;
+    public float MAX_PUSH_ACCELERATION = 1500f;
+    public float INIT_PUSH_ACCELERATION = 200f;
     private bool changeForce = true;
+
+    private void Awake()
+    {
+         INIT_PUSH_ACCELERATION = pushAcceleration;
+    }
 
     IEnumerator Start()
     {
@@ -63,46 +63,51 @@ public class CarController : MonoBehaviour {
 
         }
 
-        if (Input.GetKeyDown(KeyCode.X))
+        //if (Input.GetKeyDown(KeyCode.X))
+        //{
+        //    limitVelocity += forceForPlus;
+
+        //}
+        //else if (Input.GetKeyDown(KeyCode.C))
+        //{
+            
+        //}
+        //else if (Input.GetKeyDown(KeyCode.I))
+        //{
+        //    limitVelocity += forceForIncorrect;
+        //}
+    }
+
+    public void ApplyForce(float pushForStraigh, float pushForUphill, float pushLimit)
+    {
+        if (transform.rotation.x < -0.05f)
         {
-            limitVelocity += forceForPlus;
+            pushAcceleration += pushForUphill;
+        }
+        else if (limitVelocity < MAX_VELOCITY && rig.velocity.z > limitVelocity - 1.5f)
+        {
+            limitVelocity += pushLimit;
 
         }
-        else if (Input.GetKeyDown(KeyCode.C))
+        else
         {
-            if (transform.rotation.x < -0.05f)
-            {
-                pushAcceleration += 50f;
-            }
-            else if(limitVelocity < MAX_VELOCITY && rig.velocity.z > limitVelocity - 1.5f)
-            {
-                limitVelocity += forceForCorrect;
+            pushAcceleration += pushForStraigh;
 
+        }
+
+        if (pushAcceleration >= MAX_PUSH_ACCELERATION)
+        {
+            if (!changeForce)
+            {
+
+                pushAcceleration = MAX_PUSH_ACCELERATION;
             }
             else
             {
-                pushAcceleration += 20f;
-
-            }
-
-            if(pushAcceleration >= MAX_PUSH_ACCELERATION)
-            {
-                if (!changeForce)
-                {
-
-                    pushAcceleration = MAX_PUSH_ACCELERATION;
-                }
-                else
-                {
-                    pushAcceleration /= 1.5f;
-                }
+                pushAcceleration /= 1.5f;
             }
         }
-        else if (Input.GetKeyDown(KeyCode.I))
-        {
-            limitVelocity += forceForIncorrect;
-        }
-
     }
 
+    
 }
