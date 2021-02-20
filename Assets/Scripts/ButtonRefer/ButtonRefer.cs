@@ -28,7 +28,8 @@ public class ButtonRefer : MonoBehaviour
 
     public void InitButtonRefer(int duration)
     {
-        currentKeyCode = keyCodes[Random.Range(0, keyCodes.Length)];
+        //Quitando las letras de T a la M del enum
+        currentKeyCode = keyCodes[Random.Range(0, keyCodes.Length - 14)];
         textBox.text = currentKeyCode.ToString();
         this.duration = duration;
         StartCoroutine(Timer());

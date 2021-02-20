@@ -18,12 +18,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject parentButtonRefer;
 
     [SerializeField] private CarController carController;
+    [SerializeField] private UIManager uiManager;
 
-    [SerializeField] public Difficulty currentDifficulty = Difficulty.easy;
+    [SerializeField] public Difficulty currentDifficulty;
     private int buttonLimitForLevel = 1;
     private float timeOfCreateButtonRefer;
     private int timeForButtonRefer;
     private bool endGame = false;
+    private int plusCount = 0;
 
     private void Awake()
     {
@@ -32,15 +34,15 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(InitTimer(2f));
+        uiManager.UpdateWeidhtScore(carController.GetRB().mass);
+        StartCoroutine(InitTimer(1f));
         buttonReferActives = new List<GameObject>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log(buttonReferActives.Count);
-        //Debug.Log(buttonLimitForLevel);
+        Debug.Log(currentDifficulty);
     }
 
     public void ChangeDifficulty(Difficulty newDifficulty)
@@ -51,26 +53,26 @@ public class GameManager : MonoBehaviour
         {
             case Difficulty.easy:
 
-                timeOfCreateButtonRefer = 2.5f;
-                timeForButtonRefer = 15;
+                timeOfCreateButtonRefer = 1.3f;
+                timeForButtonRefer = 10;
 
                 break;
             case Difficulty.normal:
 
-                timeOfCreateButtonRefer = 2f;
-                timeForButtonRefer = 10;
+                timeOfCreateButtonRefer = 1.2f;
+                timeForButtonRefer = 9;
 
                 break;
             case Difficulty.hard:
 
-                timeOfCreateButtonRefer = 1.5f;
-                timeForButtonRefer = 5;
+                timeOfCreateButtonRefer = 1.1f;
+                timeForButtonRefer = 8;
 
                 break;
             case Difficulty.extreme:
 
-                timeOfCreateButtonRefer = 0.7f;
-                timeForButtonRefer = 3;
+                timeOfCreateButtonRefer = 1f;
+                timeForButtonRefer = 7;
 
                 break;
             default:
@@ -84,6 +86,7 @@ public class GameManager : MonoBehaviour
         {
             if(buttonReferActives.Count < buttonLimitForLevel)
             {
+                yield return new WaitForSeconds(timeOfCreateButtonRefer);
                 GameObject instance = Instantiate(buttonRefer, Vector3.zero, Quaternion.identity,
                                                     parentButtonRefer.transform);
 
@@ -91,7 +94,7 @@ public class GameManager : MonoBehaviour
                 buttonReferActives.Add(instance);
                 
             }
-            yield return new WaitForSeconds(timeOfCreateButtonRefer);
+            yield return new WaitForEndOfFrame();
 
         }
     }
@@ -108,62 +111,145 @@ public class GameManager : MonoBehaviour
         StartCoroutine(CreateButtonRefer());
     }
 
-    public void CalculateForce(dynamic time)
+    public void CalculateForce(float time)
     {
-        switch (currentDifficulty)
+        Debug.Log("TIME: " + time);
+        float pushForStraigh = 0, pushForUphill = 0, pushLimit = 0;
+
+        switch (time)
         {
-            case Difficulty.easy:
+            case 0:
 
-                switch ((float)time)
+                //Nothing
+
+                break;
+
+            case float n when (time > 0 && time <= timeForButtonRefer / 10):
+
+                pushForStraigh = 50f;
+                pushForUphill = 100;
+                pushLimit = 1;
+                plusCount++;
+
+                if (plusCount >= 4)
                 {
-                    case 0:
-
-                        //Nothing
-
-                        break;
-
-                    case float n when (time > 0 && time <= timeForButtonRefer/10):
-
-                        carController.ApplyForce(100f, 200f, 3);
-
-                        break;
-
-                    case float n when (time > timeForButtonRefer / 10 && time <= timeForButtonRefer / 3):
-
-                        carController.ApplyForce(50f, 100f, 3);
-
-                        break;
-
-                    case var n when (time > timeForButtonRefer / 3 || time == -1):
-
-                        carController.ApplyForce(-100f, -100f, 0);
-
-                        break;
-                    default:
-                        break;
+                    pushForStraigh = 200f;
+                    pushForUphill = 300;
+                    //Code animation plus count
+                    plusCount = 0;
+                    Debug.Log("START PLUS");
                 }
+                break;
+
+            case float n when (time > timeForButtonRefer / 10 && time <= timeForButtonRefer / 3):
+
+                pushForStraigh = 20;
+                pushForUphill = 80;
+                pushLimit = 1;
 
                 break;
-            case Difficulty.normal:
 
+            case var n when (time > timeForButtonRefer / 3 || time == -1):
 
-
-                break;
-            case Difficulty.hard:
-
-
-
-                break;
-            case Difficulty.extreme:
-
-
+                pushForStraigh = -80f;
+                pushForUphill = -100f;
+                pushLimit = -1;
 
                 break;
             default:
+
+                pushForStraigh = 20;
+                pushForUphill = 80;
+                pushLimit = 1;
                 break;
         }
 
+        carController.ApplyForce(pushForStraigh, pushForUphill, pushLimit);
+        //switch (currentDifficulty)
+        //{
+        //    case Difficulty.easy:
+
+        //        switch (time)
+        //        {
+        //            case 0:
+
+        //                //Nothing
+
+        //                break;
+
+        //            case float n when (time > 0 && time <= timeForButtonRefer/10):
+
+        //                pushForStraigh = 50f;
+        //                pushForUphill = 100;
+        //                pushLimit = 1;
+        //                plusCount++;
+
+        //                if(plusCount >= 4)
+        //                {
+        //                    pushForStraigh = 200f;
+        //                    pushForUphill = 300;
+        //                    //Code animation plus count
+        //                    plusCount = 0;
+        //                    Debug.Log("START PLUS");
+        //                }
+        //                break;
+
+        //            case float n when (time > timeForButtonRefer / 10 && time <= timeForButtonRefer / 3):
+
+        //                pushForStraigh = 20;
+        //                pushForUphill = 80;
+        //                pushLimit = 1;
+
+        //                break;
+
+        //            case var n when (time > timeForButtonRefer / 3 || time == -1):
+
+        //                pushForStraigh = -80f;
+        //                pushForUphill = -100f;
+        //                pushLimit = -1;
+
+        //                break;
+        //            default:
+        //                break;
+        //        }
+
+        //        break;
+        //    case Difficulty.normal:
+
+
+
+        //        break;
+        //    case Difficulty.hard:
+
+
+
+        //        break;
+        //    case Difficulty.extreme:
+
+
+
+        //        break;
+        //    default:
+        //        break;
+        //}
+
 
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            
+            ChangeDifficulty(currentDifficulty + 1);
+        }
+    }
+
+    public void GameOver()
+    {
+        //TODO
+        Debug.Log("PERDISTE");
+    }
+
 
 }

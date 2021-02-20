@@ -4,7 +4,7 @@ using UnityEngine.Events;
 public class GameEventListener : MonoBehaviour
 {
     public GameEvent Event;
-    public UnityEvent<dynamic> Response;
+    public UnityEvent<float> Response;
 
     private void OnEnable()
     { Event.RegisterListener(this); }
@@ -12,6 +12,6 @@ public class GameEventListener : MonoBehaviour
     private void OnDisable()
     { Event.UnregisterListener(this); }
 
-    public void OnEventRaised(dynamic v)
+    public void OnEventRaised(float v)
     { Response.Invoke(v); }
 }

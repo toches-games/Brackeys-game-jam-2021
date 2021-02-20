@@ -7,7 +7,7 @@ public class GameEvent : ScriptableObject
     private List<GameEventListener> listeners =
         new List<GameEventListener>();
 
-    public void Raise(dynamic v)
+    public void Raise(float v)
     {
         for (int i = listeners.Count - 1; i >= 0; i--)
             listeners[i].OnEventRaised(v);
