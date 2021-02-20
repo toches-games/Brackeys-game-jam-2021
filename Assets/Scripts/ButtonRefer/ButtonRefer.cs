@@ -92,11 +92,6 @@ public class ButtonRefer : MonoBehaviour
         return time * waitTime;
     }
 
-    public void ProbandoElEvento(dynamic v)
-    {
-        Debug.Log(v);
-    }
-
     private void FinishedCycle()
     {
         GameManager.SI.DeleteButtonOfActives(gameObject);

@@ -17,7 +17,9 @@ public class GameManager : MonoBehaviour
     private List<GameObject> buttonReferActives;
     [SerializeField] private GameObject parentButtonRefer;
 
-    [SerializeField] private Difficulty currentDifficulty = Difficulty.easy;
+    [SerializeField] private CarController carController;
+
+    [SerializeField] public Difficulty currentDifficulty = Difficulty.easy;
     private int buttonLimitForLevel = 1;
     private float timeOfCreateButtonRefer;
     private int timeForButtonRefer;
@@ -50,28 +52,24 @@ public class GameManager : MonoBehaviour
             case Difficulty.easy:
 
                 timeOfCreateButtonRefer = 2.5f;
-                //buttonLimitForLevel = 1;
-                timeForButtonRefer = 6;
+                timeForButtonRefer = 15;
 
                 break;
             case Difficulty.normal:
 
                 timeOfCreateButtonRefer = 2f;
-                //buttonLimitForLevel = 2;
-                timeForButtonRefer = 5;
+                timeForButtonRefer = 10;
 
                 break;
             case Difficulty.hard:
 
                 timeOfCreateButtonRefer = 1.5f;
-                //buttonLimitForLevel = 2;
-                timeForButtonRefer = 4;
+                timeForButtonRefer = 5;
 
                 break;
             case Difficulty.extreme:
 
                 timeOfCreateButtonRefer = 0.7f;
-                //buttonLimitForLevel = 3;
                 timeForButtonRefer = 3;
 
                 break;
@@ -109,4 +107,63 @@ public class GameManager : MonoBehaviour
         ChangeDifficulty(Difficulty.easy);
         StartCoroutine(CreateButtonRefer());
     }
+
+    public void CalculateForce(dynamic time)
+    {
+        switch (currentDifficulty)
+        {
+            case Difficulty.easy:
+
+                switch ((float)time)
+                {
+                    case 0:
+
+                        //Nothing
+
+                        break;
+
+                    case float n when (time > 0 && time <= timeForButtonRefer/10):
+
+                        carController.ApplyForce(100f, 200f, 3);
+
+                        break;
+
+                    case float n when (time > timeForButtonRefer / 10 && time <= timeForButtonRefer / 3):
+
+                        carController.ApplyForce(50f, 100f, 3);
+
+                        break;
+
+                    case var n when (time > timeForButtonRefer / 3 || time == -1):
+
+                        carController.ApplyForce(-100f, -100f, 0);
+
+                        break;
+                    default:
+                        break;
+                }
+
+                break;
+            case Difficulty.normal:
+
+
+
+                break;
+            case Difficulty.hard:
+
+
+
+                break;
+            case Difficulty.extreme:
+
+
+
+                break;
+            default:
+                break;
+        }
+
+
+    }
+
 }

@@ -291,7 +291,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7833112881393964031}
   - component: {fileID: 7833112881393964028}
-  - component: {fileID: 7833112881393964029}
   m_Layer: 5
   m_Name: ButtonRefer
   m_TagString: Untagged
@@ -338,43 +337,3 @@ MonoBehaviour:
   onDied: {fileID: 11400000, guid: 632a7b15b01d7b64e86fcc4e2c07c897, type: 2}
   duration: 4
   smoothAnimation: 200
---- !u!114 &7833112881393964029
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7833112881393964030}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3695528727ba34448bbeb2ef9f62c1f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Event: {fileID: 11400000, guid: 632a7b15b01d7b64e86fcc4e2c07c897, type: 2}
-  Response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7833112881393964028}
-        m_TargetAssemblyTypeName: ButtonRefer, Assembly-CSharp
-        m_MethodName: ProbandoElEvento
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 7833112881393964028}
-        m_TargetAssemblyTypeName: ButtonRefer, Assembly-CSharp
-        m_MethodName: DestroyGameObject
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2

@@ -382,7 +382,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.90000033, y: -0.49, z: 1.3610001}
+  m_ConnectedAnchor: {x: 0.90000033, y: -0.49, z: 1.3610003}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -655,6 +655,7 @@ GameObject:
   m_Component:
   - component: {fileID: 444539515}
   - component: {fileID: 444539514}
+  - component: {fileID: 444539516}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -676,6 +677,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buttonRefer: {fileID: 7833112881393964030, guid: 1f0d238e9e1f2aa45a296077ceb652d2, type: 3}
   parentButtonRefer: {fileID: 1487393986}
+  carController: {fileID: 675900218}
   currentDifficulty: 0
 --- !u!4 &444539515
 Transform:
@@ -691,6 +693,34 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &444539516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 444539513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3695528727ba34448bbeb2ef9f62c1f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 632a7b15b01d7b64e86fcc4e2c07c897, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 444539514}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: CalculateForce
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &467717405
 GameObject:
   m_ObjectHideFlags: 0
@@ -981,11 +1011,6 @@ MonoBehaviour:
   limitVelocity: -1
   time: 0.05
   pushAcceleration: 200
-  currentAcceleration: 0
-  forceForCorrect: 2
-  forceForIncorrect: -0.1
-  forceForPlus: 10
-  targetAcceleration: 0
   percentForAerodynamicsDeceleration: 18
   rig: {fileID: 675900220}
 --- !u!136 &675900219
@@ -1026,7 +1051,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 675900217}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.75, y: 0.9, z: 19.65}
+  m_LocalPosition: {x: -3.75, y: 0.84, z: 2.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 533509188}
@@ -1237,7 +1262,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.9000001, y: -0.49699998, z: -1.4279995}
+  m_ConnectedAnchor: {x: 0.9000001, y: -0.49699998, z: -1.4280002}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -1467,7 +1492,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.9000001, y: -0.49, z: 1.3610001}
+  m_ConnectedAnchor: {x: -0.9000001, y: -0.49, z: 1.3610003}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -2443,7 +2468,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -160, y: -112}
+  m_AnchoredPosition: {x: 351, y: -193}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1487393988
@@ -2882,7 +2907,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.9000006, y: -0.49699998, z: -1.4279995}
+  m_ConnectedAnchor: {x: -0.9000006, y: -0.49699998, z: -1.4280005}
   m_UseSpring: 0
   m_Spring:
     spring: 0
