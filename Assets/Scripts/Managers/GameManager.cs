@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private CarController carController;
 
-    [SerializeField] public Difficulty currentDifficulty = Difficulty.easy;
+    [SerializeField] public Difficulty currentDifficulty;
     private int buttonLimitForLevel = 1;
     private float timeOfCreateButtonRefer;
     private int timeForButtonRefer;
@@ -40,8 +40,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log(buttonReferActives.Count);
-        //Debug.Log(buttonLimitForLevel);
+        //Debug.Log(currentDifficulty);
     }
 
     public void ChangeDifficulty(Difficulty newDifficulty)
@@ -70,7 +69,7 @@ public class GameManager : MonoBehaviour
                 break;
             case Difficulty.extreme:
 
-                timeOfCreateButtonRefer = 0.7f;
+                timeOfCreateButtonRefer = 1.2f;
                 timeForButtonRefer = 3;
 
                 break;
@@ -109,14 +108,14 @@ public class GameManager : MonoBehaviour
         StartCoroutine(CreateButtonRefer());
     }
 
-    public void CalculateForce(dynamic time)
+    public void CalculateForce(float time)
     {
         float pushForStraigh = 0, pushForUphill = 0, pushLimit = 0;
         switch (currentDifficulty)
         {
             case Difficulty.easy:
 
-                switch ((float)time)
+                switch (time)
                 {
                     case 0:
 
@@ -184,4 +183,18 @@ public class GameManager : MonoBehaviour
 
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            
+            ChangeDifficulty(currentDifficulty + 1);
+        }
+    }
+
+    public void GameOver()
+    {
+        //TODO
+        Debug.Log("PERDISTE");
+    }
 }

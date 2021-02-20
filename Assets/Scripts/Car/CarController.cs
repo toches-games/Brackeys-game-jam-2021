@@ -10,10 +10,14 @@ public class CarController : MonoBehaviour {
     [SerializeField] private float percentForAerodynamicsDeceleration;
     [SerializeField] private Rigidbody rig = default;
 
+    [SerializeField] private GameEvent onGameOver;
+
+
     private float timeOfResponse;
     public float MAX_VELOCITY;
-    public float MAX_PUSH_ACCELERATION = 1500f;
+    public float MAX_PUSH_ACCELERATION = 3000;
     public float INIT_PUSH_ACCELERATION = 200f;
+    public float CONDITION_GAME_OVER = -0.8f;
     private bool changeForce = true;
 
     private void Awake()
@@ -49,6 +53,8 @@ public class CarController : MonoBehaviour {
 
     private void Update() {
 
+        Debug.Log(transform.rotation);
+
         SubtractAerodynamicsAcceleration();
         visualVelocity = rig.velocity;
 
@@ -64,6 +70,11 @@ public class CarController : MonoBehaviour {
         {
             changeForce = true;
 
+        }
+
+        if (rig.velocity.z < CONDITION_GAME_OVER)
+        {
+            onGameOver.Raise(1);
         }
 
     }
