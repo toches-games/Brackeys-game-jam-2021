@@ -26,15 +26,11 @@ public class ButtonRefer : MonoBehaviour
             KeyCode.J, KeyCode.K, KeyCode.L, KeyCode.B, KeyCode.N, KeyCode.M
     };
 
-    private void OnEnable()
+    public void InitButtonRefer(int duration)
     {
         currentKeyCode = keyCodes[Random.Range(0, keyCodes.Length)];
         textBox.text = currentKeyCode.ToString();
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
+        this.duration = duration;
         StartCoroutine(Timer());
     }
 
@@ -55,9 +51,6 @@ public class ButtonRefer : MonoBehaviour
         {
             objectToRotate.Rotate(new Vector3(0, 0, -(360f / smoothAnimation)));
 
-            //Para sacar cada segundo
-            //if(i == ((smoothAnimation / duration) * (time + 1)))
-
             yield return new WaitForSeconds(waitTime);
         }
 
@@ -65,6 +58,7 @@ public class ButtonRefer : MonoBehaviour
         {
             onDied.Raise(0);
             detectingKey = false;
+            FinishedCycle();
         }
 
     }
@@ -86,7 +80,7 @@ public class ButtonRefer : MonoBehaviour
                 detectingKey = false;
 
                 //Cambiar por animacion
-                Destroy(gameObject);
+                FinishedCycle();
 
                 return;
             }
@@ -103,8 +97,11 @@ public class ButtonRefer : MonoBehaviour
         Debug.Log(v);
     }
 
-    public void DestroyGameObject()
+    private void FinishedCycle()
     {
+        GameManager.SI.DeleteButtonOfActives(gameObject);
         Destroy(gameObject);
     }
+
+    
 }

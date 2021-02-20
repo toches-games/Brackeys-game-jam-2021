@@ -674,8 +674,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7556da815e7e6b4f856f69f9da79ecf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonRefer: {fileID: 0}
-  parentButtonRefer: {fileID: 0}
+  buttonRefer: {fileID: 7833112881393964030, guid: 1f0d238e9e1f2aa45a296077ceb652d2, type: 3}
+  parentButtonRefer: {fileID: 1487393986}
   currentDifficulty: 0
 --- !u!4 &444539515
 Transform:
@@ -2477,12 +2477,12 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 2
+  m_ChildAlignment: 4
   m_StartCorner: 1
   m_StartAxis: 0
   m_CellSize: {x: 155, y: 155}
   m_Spacing: {x: 10, y: 10}
-  m_Constraint: 1
+  m_Constraint: 0
   m_ConstraintCount: 3
 --- !u!1001 &1525678067
 PrefabInstance:
