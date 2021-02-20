@@ -94,10 +94,10 @@ namespace Cinemachine
         [FormerlySerializedAs("m_Smoothing")]
         public float m_Damping = 0;
 
-        /// <summary>If greater than zero, a higher score will be given to shots when the target is closer to
+        /// <summary>If greater than zero, a higher force will be given to shots when the target is closer to
         /// this distance.  Set this to zero to disable this feature</summary>
         [Header("Shot Evaluation")]
-        [Tooltip("If greater than zero, a higher score will be given to shots when the target is closer to this distance.  Set this to zero to disable this feature.")]
+        [Tooltip("If greater than zero, a higher force will be given to shots when the target is closer to this distance.  Set this to zero to disable this feature.")]
         public float m_OptimalTargetDistance = 0;
 
         /// <summary>See wheter an object is blocking the camera's view of the target</summary>

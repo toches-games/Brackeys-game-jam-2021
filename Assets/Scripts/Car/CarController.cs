@@ -11,25 +11,27 @@ public class CarController : MonoBehaviour {
     [SerializeField] private Rigidbody rig = default;
 
     [SerializeField] private GameEvent onGameOver;
+    [SerializeField] private GameEvent onChangeForce;
 
 
     private float timeOfResponse;
     public float MAX_VELOCITY;
-    public float MAX_PUSH_ACCELERATION = 3000;
-    public float INIT_PUSH_ACCELERATION = 200f;
-    public float CONDITION_GAME_OVER = -0.8f;
+    public float MAX_PUSH_ACCELERATION;
+    public float INIT_PUSH_ACCELERATION;
+    public float CONDITION_GAME_OVER;
     private bool changeForce = true;
 
     private void Awake()
     {
-         INIT_PUSH_ACCELERATION = pushAcceleration;
+        INIT_PUSH_ACCELERATION = pushAcceleration;
+        limitVelocity = MAX_VELOCITY;
     }
 
     IEnumerator Start()
     {
         while (true)
         {
-            if(rig.velocity.z < limitVelocity)
+            if (rig.velocity.z < limitVelocity && pushAcceleration > 0)
             {
                 AddForceZ(pushAcceleration);
             }
@@ -53,7 +55,7 @@ public class CarController : MonoBehaviour {
 
     private void Update() {
 
-        Debug.Log(transform.rotation);
+        //Debug.Log(transform.rotation);
 
         SubtractAerodynamicsAcceleration();
         visualVelocity = rig.velocity;
@@ -62,8 +64,12 @@ public class CarController : MonoBehaviour {
         {
             if(pushAcceleration >= 1000)
             {
-                pushAcceleration -= pushAcceleration / 2.5f;
+                float subtractor = pushAcceleration / 4f;
+                pushAcceleration -= Mathf.Round(subtractor);
+                onChangeForce.Raise(-subtractor);
             }
+
+
             changeForce = false;
         }
         else if(transform.rotation.x > -0.1)
@@ -81,18 +87,37 @@ public class CarController : MonoBehaviour {
 
     public void ApplyForce(float pushForStraigh, float pushForUphill, float pushLimit)
     {
+        float oldAcceleration = pushAcceleration;
         if (transform.rotation.x < -0.05f)
         {
             pushAcceleration += pushForUphill;
-        }
-        else if (limitVelocity < MAX_VELOCITY && rig.velocity.z > limitVelocity - 1.5f)
-        {
-            limitVelocity += pushLimit;
+            //Debug.Log("PushUphill");
 
         }
+        //else if (limitVelocity < MAX_VELOCITY && rig.velocity.z > limitVelocity - 0.5f)
+        //{
+        //    if((limitVelocity + pushLimit) < 0)
+        //        {
+        //        limitVelocity = 0;
+        //    }
+        //    else
+        //    {
+        //        limitVelocity += pushLimit;
+        //    }
+        //    //Debug.Log("PushLimit");
+        //}
         else
         {
-            pushAcceleration += pushForStraigh;
+            //Debug.Log("PushStraigh");
+            if((pushAcceleration + pushForStraigh) < 0)
+            {
+                pushAcceleration = 0;
+            }
+            else
+            {
+                pushAcceleration += pushForStraigh;
+            }
+            
 
         }
 
@@ -103,10 +128,27 @@ public class CarController : MonoBehaviour {
 
                 pushAcceleration = MAX_PUSH_ACCELERATION;
             }
-            else
-            {
-                pushAcceleration /= 1.5f;
-            }
+            //else
+            //{
+            //    pushAcceleration /= 1.5f;
+            //}
         }
+        //if(limitVelocity <= 0)
+        //{
+        //    onChangeForce.Raise(-pushAcceleration);
+
+        //}
+        //else
+        //{
+        //}
+
+
+        onChangeForce.Raise(pushAcceleration - oldAcceleration);
+
+    }
+
+    public Rigidbody GetRB()
+    {
+        return rig;
     }
 }
