@@ -66,15 +66,14 @@ public class CarController : MonoBehaviour {
                 float subtractor = pushAcceleration / 4f;
                 pushAcceleration -= Mathf.Round(subtractor);
                 onChangeForce.Raise(-subtractor);
+                SFXManager.SI.PlaySound(Sound.effortUp);
             }
-
 
             changeForce = false;
         }
         else if(transform.rotation.x > -0.1)
         {
             changeForce = true;
-
         }
 
         if (rig.velocity.z < CONDITION_GAME_OVER)

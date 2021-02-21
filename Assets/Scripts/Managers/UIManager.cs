@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -12,6 +13,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject gameOverGO;
     [SerializeField] private GameObject winGO;
     private int force;
+
+    [SerializeField] UnityEvent nextTrack;
 
     // Start is called before the first frame update
     void Start()
@@ -69,9 +72,11 @@ public class UIManager : MonoBehaviour
                 initPresentationText.text = "READY";
             }
 
-            if (i <= 1)
+            if (i == 1)
             {
                 initPresentationText.text = "GO!!";
+                nextTrack.Invoke();
+
             }
             initTimerText.text = (i).ToString();
 
@@ -80,6 +85,7 @@ public class UIManager : MonoBehaviour
 
         initPresentationText.gameObject.SetActive(false);
         initTimerText.gameObject.SetActive(false);
+
     }
 
     public void RefreshScene()

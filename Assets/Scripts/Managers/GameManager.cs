@@ -79,17 +79,21 @@ public class GameManager : MonoBehaviour
                 timeOfCreateButtonRefer = 1.2f;
                 timeForButtonRefer = 9;
 
+                SFXManager.SI.PlaySound(Sound.logro);
+
                 break;
             case Difficulty.hard:
 
                 timeOfCreateButtonRefer = 1.1f;
                 timeForButtonRefer = 8;
+                SFXManager.SI.PlaySound(Sound.logro);
 
                 break;
             case Difficulty.extreme:
 
                 timeOfCreateButtonRefer = 1f;
                 timeForButtonRefer = 7;
+                SFXManager.SI.PlaySound(Sound.logro);
 
                 break;
 
@@ -97,6 +101,7 @@ public class GameManager : MonoBehaviour
 
                 OnWin.Raise(0);
                 endGame = true;
+                SFXManager.SI.PlaySound(Sound.logro);
 
                 break;
             default:
@@ -163,8 +168,12 @@ public class GameManager : MonoBehaviour
                     plusCount = 0;
 
                     GeneratePushPerson(pushForStraigh);
-                    
+                    SFXManager.SI.PlaySound(Sound.corneta);
+
                 }
+
+                SFXManager.SI.PlaySound(Sound.effortLoop);
+
                 break;
 
             case float n when (time > timeForButtonRefer / 10 && time <= timeForButtonRefer / 3):
@@ -173,6 +182,8 @@ public class GameManager : MonoBehaviour
                 pushForUphill = 100;
                 pushLimit = 1;
                 plusCount = 0;
+
+                SFXManager.SI.PlaySound(Sound.effortLoop);
 
                 break;
 
@@ -183,6 +194,8 @@ public class GameManager : MonoBehaviour
                 pushLimit = -1;
                 plusCount = 0;
 
+                SFXManager.SI.PlaySound(Sound.anger);
+
                 break;
             default:
 
@@ -190,6 +203,8 @@ public class GameManager : MonoBehaviour
                 pushForUphill = 80;
                 pushLimit = 1;
                 plusCount = 0;
+
+                SFXManager.SI.PlaySound(Sound.effortLoop);
 
                 break;
         }
