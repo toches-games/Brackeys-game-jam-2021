@@ -1,12 +1,20 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
     [SerializeField] private Text forceText;
     [SerializeField] private Text weightText;
+    [SerializeField] private Text initTimerText;
+    [SerializeField] private Text initPresentationText;
+    [SerializeField] private GameObject gameOverGO;
+    [SerializeField] private GameObject winGO;
     private int force;
+
+    [SerializeField] UnityEvent nextTrack;
 
     // Start is called before the first frame update
     void Start()
@@ -53,5 +61,35 @@ public class UIManager : MonoBehaviour
             }
         }
 
+    }
+
+    public IEnumerator InitText()
+    {
+        for (int i = 5; i > 0; i--)
+        {
+            if (i >= 5)
+            {
+                initPresentationText.text = "READY";
+            }
+
+            if (i == 1)
+            {
+                initPresentationText.text = "GO!!";
+                nextTrack.Invoke();
+
+            }
+            initTimerText.text = (i).ToString();
+
+            yield return new WaitForSeconds(1f);
+        }
+
+        initPresentationText.gameObject.SetActive(false);
+        initTimerText.gameObject.SetActive(false);
+
+    }
+
+    public void RefreshScene()
+    {
+        SceneManager.LoadScene(0);
     }
 }

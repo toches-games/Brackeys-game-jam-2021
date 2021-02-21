@@ -7,7 +7,8 @@ public enum Difficulty
     easy,
     normal,
     hard,
-    extreme
+    extreme, 
+    win
 }
 
 public class GameManager : MonoBehaviour
@@ -23,9 +24,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] public Difficulty currentDifficulty;
     private int buttonLimitForLevel = 1;
     private float timeOfCreateButtonRefer;
-    private int timeForButtonRefer;
+    private float timeForButtonRefer;
     private bool endGame = false;
     private int plusCount = 0;
+
+    [SerializeField] private List<GameObject> pushPersonsPrefab;
+    private List<PushPerson> pushPersonsActive;
+    private int pushPersonCount = 1;
+    private float accumulatorPaddingPersonZ = -0.5f;
+    float paddingZ = 0;
+    float paddingX = 0;
+
+    [SerializeField] private GameEvent OnWin;
 
     private void Awake()
     {
@@ -34,15 +44,22 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        uiManager.UpdateWeidhtScore(carController.GetRB().mass);
-        StartCoroutine(InitTimer(1f));
+        
         buttonReferActives = new List<GameObject>();
+        pushPersonsActive = new List<PushPerson>();
+    }
+
+    void Update()
+    {
+        //Debug.Log(plusCount);
     }
 
     // Update is called once per frame
-    void Update()
+    public void StartGame()
     {
-        Debug.Log(currentDifficulty);
+        uiManager.UpdateWeidhtScore(carController.GetRB().mass);
+        StartCoroutine(uiManager.InitText());
+        StartCoroutine(InitTimer(4f));
     }
 
     public void ChangeDifficulty(Difficulty newDifficulty)
@@ -62,17 +79,29 @@ public class GameManager : MonoBehaviour
                 timeOfCreateButtonRefer = 1.2f;
                 timeForButtonRefer = 9;
 
+                SFXManager.SI.PlaySound(Sound.logro);
+
                 break;
             case Difficulty.hard:
 
                 timeOfCreateButtonRefer = 1.1f;
                 timeForButtonRefer = 8;
+                SFXManager.SI.PlaySound(Sound.logro);
 
                 break;
             case Difficulty.extreme:
 
                 timeOfCreateButtonRefer = 1f;
                 timeForButtonRefer = 7;
+                SFXManager.SI.PlaySound(Sound.logro);
+
+                break;
+
+            case Difficulty.win:
+
+                OnWin.Raise(0);
+                endGame = true;
+                SFXManager.SI.PlaySound(Sound.logro);
 
                 break;
             default:
@@ -90,7 +119,7 @@ public class GameManager : MonoBehaviour
                 GameObject instance = Instantiate(buttonRefer, Vector3.zero, Quaternion.identity,
                                                     parentButtonRefer.transform);
 
-                instance.GetComponent<ButtonRefer>().InitButtonRefer(timeForButtonRefer);
+                instance.GetComponent<ButtonRefer>().InitButtonRefer(Mathf.RoundToInt(timeForButtonRefer));
                 buttonReferActives.Add(instance);
                 
             }
@@ -113,9 +142,8 @@ public class GameManager : MonoBehaviour
 
     public void CalculateForce(float time)
     {
-        Debug.Log("TIME: " + time);
+        //Debug.Log("TIME: " + time);
         float pushForStraigh = 0, pushForUphill = 0, pushLimit = 0;
-
         switch (time)
         {
             case 0:
@@ -125,35 +153,48 @@ public class GameManager : MonoBehaviour
                 break;
 
             case float n when (time > 0 && time <= timeForButtonRefer / 10):
+                Debug.Log("ENTRA A PLUS");
 
-                pushForStraigh = 50f;
-                pushForUphill = 100;
+                pushForStraigh = 120f;
+                pushForUphill = 170;
                 pushLimit = 1;
                 plusCount++;
 
                 if (plusCount >= 4)
                 {
-                    pushForStraigh = 200f;
-                    pushForUphill = 300;
-                    //Code animation plus count
+
+                    pushForStraigh = 300f;
+                    pushForUphill = 400;
                     plusCount = 0;
-                    Debug.Log("START PLUS");
+
+                    GeneratePushPerson(pushForStraigh);
+                    SFXManager.SI.PlaySound(Sound.corneta);
+
                 }
+
+                SFXManager.SI.PlaySound(Sound.effortLoop);
+
                 break;
 
             case float n when (time > timeForButtonRefer / 10 && time <= timeForButtonRefer / 3):
 
-                pushForStraigh = 20;
-                pushForUphill = 80;
+                pushForStraigh = 70;
+                pushForUphill = 100;
                 pushLimit = 1;
+                plusCount = 0;
+
+                SFXManager.SI.PlaySound(Sound.effortLoop);
 
                 break;
 
             case var n when (time > timeForButtonRefer / 3 || time == -1):
 
                 pushForStraigh = -80f;
-                pushForUphill = -100f;
+                pushForUphill = -60f;
                 pushLimit = -1;
+                plusCount = 0;
+
+                SFXManager.SI.PlaySound(Sound.anger);
 
                 break;
             default:
@@ -161,79 +202,18 @@ public class GameManager : MonoBehaviour
                 pushForStraigh = 20;
                 pushForUphill = 80;
                 pushLimit = 1;
+                plusCount = 0;
+
+                SFXManager.SI.PlaySound(Sound.effortLoop);
+
                 break;
         }
 
+        if (time > 0 && pushPersonCount == 1)
+        {
+            GeneratePushPerson(pushForStraigh);
+        }
         carController.ApplyForce(pushForStraigh, pushForUphill, pushLimit);
-        //switch (currentDifficulty)
-        //{
-        //    case Difficulty.easy:
-
-        //        switch (time)
-        //        {
-        //            case 0:
-
-        //                //Nothing
-
-        //                break;
-
-        //            case float n when (time > 0 && time <= timeForButtonRefer/10):
-
-        //                pushForStraigh = 50f;
-        //                pushForUphill = 100;
-        //                pushLimit = 1;
-        //                plusCount++;
-
-        //                if(plusCount >= 4)
-        //                {
-        //                    pushForStraigh = 200f;
-        //                    pushForUphill = 300;
-        //                    //Code animation plus count
-        //                    plusCount = 0;
-        //                    Debug.Log("START PLUS");
-        //                }
-        //                break;
-
-        //            case float n when (time > timeForButtonRefer / 10 && time <= timeForButtonRefer / 3):
-
-        //                pushForStraigh = 20;
-        //                pushForUphill = 80;
-        //                pushLimit = 1;
-
-        //                break;
-
-        //            case var n when (time > timeForButtonRefer / 3 || time == -1):
-
-        //                pushForStraigh = -80f;
-        //                pushForUphill = -100f;
-        //                pushLimit = -1;
-
-        //                break;
-        //            default:
-        //                break;
-        //        }
-
-        //        break;
-        //    case Difficulty.normal:
-
-
-
-        //        break;
-        //    case Difficulty.hard:
-
-
-
-        //        break;
-        //    case Difficulty.extreme:
-
-
-
-        //        break;
-        //    default:
-        //        break;
-        //}
-
-
     }
 
     private void OnTriggerEnter(Collider other)
@@ -245,11 +225,68 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void GameOver()
+    private void GeneratePushPerson(float force)
     {
-        //TODO
-        Debug.Log("PERDISTE");
+        pushPersonCount++;
+        if (pushPersonCount > 2)
+        {
+
+            paddingZ = accumulatorPaddingPersonZ;
+
+            if (pushPersonCount >= 4)
+            {
+                pushPersonCount = 2;
+                accumulatorPaddingPersonZ += accumulatorPaddingPersonZ;
+
+            }
+        }
+        if (pushPersonCount % 2 != 0)
+        {
+            paddingX = -0.2f;
+        }
+        else
+        {
+            paddingX = 0.8f;
+
+        }
+
+        Vector3 target = new Vector3(carController.referToPerson.transform.position.x + paddingX,
+                    carController.referToPerson.transform.localPosition.y + 1,
+                    carController.referToPerson.transform.position.z + paddingZ);
+
+        GameObject instance = Instantiate(pushPersonsPrefab[Random.Range(0, pushPersonsPrefab.Count)],
+                    new Vector3(target.x,
+                    target.y,
+                    target.z - 5),
+                    Quaternion.identity,
+                    GameObject.Find("PushPersons").transform);
+
+        if(pushPersonCount == 2)
+        {
+            instance.GetComponent<PushPerson>().speedToMoveTarget =
+                (carController.pushAcceleration + force) / 30f;
+        }
+        else
+        {
+            instance.GetComponent<PushPerson>().speedToMoveTarget =
+                (carController.pushAcceleration + force) / 90f;
+        }
+
+        instance.GetComponent<PushPerson>().paddingX = paddingX;
+        instance.GetComponent<PushPerson>().paddingZ = paddingZ;
+
+        pushPersonsActive.Add(instance.GetComponent<PushPerson>());
     }
 
+    public void GameOver()
+    {
+        foreach (var item in pushPersonsActive)
+        {
+            item.AnimController.SetTrigger("OnDead");
+            item.init = false;
+        }
+
+        endGame = true;
+    }
 
 }
