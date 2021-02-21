@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 public class CarController : MonoBehaviour {
     [SerializeField] private Vector3 visualVelocity;
@@ -127,5 +126,7 @@ public class CarController : MonoBehaviour {
     {
         return rig;
     }
+
+    
 
 }

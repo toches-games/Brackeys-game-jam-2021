@@ -36,7 +36,6 @@ public class ButtonRefer : MonoBehaviour
         textBox.text = currentKeyCode.ToString();
         this.duration = duration;
         StartCoroutine(Timer());
-        Debug.Log(this.duration);
     }
 
     // Update is called once per frame

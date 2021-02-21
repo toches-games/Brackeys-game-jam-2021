@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -8,6 +9,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Text weightText;
     [SerializeField] private Text initTimerText;
     [SerializeField] private Text initPresentationText;
+    [SerializeField] private GameObject gameOverGO;
+    [SerializeField] private GameObject winGO;
     private int force;
 
     // Start is called before the first frame update
@@ -77,5 +80,10 @@ public class UIManager : MonoBehaviour
 
         initPresentationText.gameObject.SetActive(false);
         initTimerText.gameObject.SetActive(false);
+    }
+
+    public void RefreshScene()
+    {
+        SceneManager.LoadScene(0);
     }
 }

@@ -7,7 +7,8 @@ public enum Difficulty
     easy,
     normal,
     hard,
-    extreme
+    extreme, 
+    win
 }
 
 public class GameManager : MonoBehaviour
@@ -23,7 +24,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] public Difficulty currentDifficulty;
     private int buttonLimitForLevel = 1;
     private float timeOfCreateButtonRefer;
-    private int timeForButtonRefer;
+    private float timeForButtonRefer;
     private bool endGame = false;
     private int plusCount = 0;
 
@@ -33,6 +34,8 @@ public class GameManager : MonoBehaviour
     private float accumulatorPaddingPersonZ = -0.5f;
     float paddingZ = 0;
     float paddingX = 0;
+
+    [SerializeField] private GameEvent OnWin;
 
     private void Awake()
     {
@@ -44,6 +47,11 @@ public class GameManager : MonoBehaviour
         
         buttonReferActives = new List<GameObject>();
         pushPersonsActive = new List<PushPerson>();
+    }
+
+    void Update()
+    {
+        //Debug.Log(plusCount);
     }
 
     // Update is called once per frame
@@ -84,6 +92,13 @@ public class GameManager : MonoBehaviour
                 timeForButtonRefer = 7;
 
                 break;
+
+            case Difficulty.win:
+
+                OnWin.Raise(0);
+                endGame = true;
+
+                break;
             default:
                 break;
         }
@@ -99,7 +114,7 @@ public class GameManager : MonoBehaviour
                 GameObject instance = Instantiate(buttonRefer, Vector3.zero, Quaternion.identity,
                                                     parentButtonRefer.transform);
 
-                instance.GetComponent<ButtonRefer>().InitButtonRefer(timeForButtonRefer);
+                instance.GetComponent<ButtonRefer>().InitButtonRefer(Mathf.RoundToInt(timeForButtonRefer));
                 buttonReferActives.Add(instance);
                 
             }
@@ -124,7 +139,6 @@ public class GameManager : MonoBehaviour
     {
         //Debug.Log("TIME: " + time);
         float pushForStraigh = 0, pushForUphill = 0, pushLimit = 0;
-
         switch (time)
         {
             case 0:
@@ -134,6 +148,7 @@ public class GameManager : MonoBehaviour
                 break;
 
             case float n when (time > 0 && time <= timeForButtonRefer / 10):
+                Debug.Log("ENTRA A PLUS");
 
                 pushForStraigh = 120f;
                 pushForUphill = 170;
