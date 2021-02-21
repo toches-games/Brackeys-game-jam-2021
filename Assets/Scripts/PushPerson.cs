@@ -5,7 +5,7 @@ using UnityEngine;
 public class PushPerson : MonoBehaviour
 {
     private GameObject carController;
-    private GameObject target;
+    [SerializeField] private GameObject target;
     private Rigidbody rb;
 
     public Animator AnimController { get; set; }

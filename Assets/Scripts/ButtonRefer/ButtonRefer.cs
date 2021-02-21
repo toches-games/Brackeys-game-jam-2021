@@ -14,6 +14,9 @@ public class ButtonRefer : MonoBehaviour
     [SerializeField] private float smoothAnimation = 200;
     private float waitTime = 0;
 
+    [SerializeField] private List<Sprite> sprites = new List<Sprite>();
+    [SerializeField] private GameObject background;
+
     private KeyCode currentKeyCode;
     private bool detectingKey = false;
     private int time = 1;
@@ -33,6 +36,7 @@ public class ButtonRefer : MonoBehaviour
         textBox.text = currentKeyCode.ToString();
         this.duration = duration;
         StartCoroutine(Timer());
+        Debug.Log(this.duration);
     }
 
     // Update is called once per frame
@@ -44,6 +48,11 @@ public class ButtonRefer : MonoBehaviour
         }
     }
 
+    private void ChangeSprite(int number)
+    {
+        background.GetComponent<Image>().sprite = sprites[number];
+    }
+
     private IEnumerator Timer()
     {
         detectingKey = true;
@@ -51,6 +60,15 @@ public class ButtonRefer : MonoBehaviour
         for (time = 1; time <= smoothAnimation; time++)
         {
             objectToRotate.Rotate(new Vector3(0, 0, -(360f / smoothAnimation)));
+
+            if (time >=  duration * 2.7f && time <= duration * 7.6f)
+            {
+                ChangeSprite(1);
+
+            }else if (time > duration * 7.6f)
+            {
+                ChangeSprite(2);
+            }
 
             yield return new WaitForSeconds(waitTime);
         }

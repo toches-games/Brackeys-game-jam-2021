@@ -6,6 +6,8 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] private Text forceText;
     [SerializeField] private Text weightText;
+    [SerializeField] private Text initTimerText;
+    [SerializeField] private Text initPresentationText;
     private int force;
 
     // Start is called before the first frame update
@@ -53,5 +55,27 @@ public class UIManager : MonoBehaviour
             }
         }
 
+    }
+
+    public IEnumerator InitText()
+    {
+        for (int i = 5; i > 0; i--)
+        {
+            if (i >= 5)
+            {
+                initPresentationText.text = "READY";
+            }
+
+            if (i <= 1)
+            {
+                initPresentationText.text = "GO!!";
+            }
+            initTimerText.text = (i).ToString();
+
+            yield return new WaitForSeconds(1f);
+        }
+
+        initPresentationText.gameObject.SetActive(false);
+        initTimerText.gameObject.SetActive(false);
     }
 }

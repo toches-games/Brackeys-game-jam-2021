@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private List<GameObject> pushPersonsPrefab;
     private List<PushPerson> pushPersonsActive;
-    private int pushPersonCount = 0;
+    private int pushPersonCount = 1;
     private float accumulatorPaddingPersonZ = -0.5f;
     float paddingZ = 0;
     float paddingX = 0;
@@ -41,16 +41,17 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        uiManager.UpdateWeidhtScore(carController.GetRB().mass);
-        StartCoroutine(InitTimer(1f));
+        
         buttonReferActives = new List<GameObject>();
         pushPersonsActive = new List<PushPerson>();
     }
 
     // Update is called once per frame
-    void Update()
+    public void StartGame()
     {
-        //Debug.Log(currentDifficulty);
+        uiManager.UpdateWeidhtScore(carController.GetRB().mass);
+        StartCoroutine(uiManager.InitText());
+        StartCoroutine(InitTimer(4f));
     }
 
     public void ChangeDifficulty(Difficulty newDifficulty)
@@ -139,55 +140,15 @@ public class GameManager : MonoBehaviour
                 pushLimit = 1;
                 plusCount++;
 
-                if (plusCount >= 1)
+                if (plusCount >= 4)
                 {
-                    
 
-                    pushPersonCount++;
                     pushForStraigh = 300f;
                     pushForUphill = 400;
                     plusCount = 0;
 
-                    if(pushPersonCount > 2)
-                    {
-
-                        paddingZ = accumulatorPaddingPersonZ;
-
-                        if(pushPersonCount >= 4)
-                        {
-                            pushPersonCount = 2;
-                            accumulatorPaddingPersonZ += accumulatorPaddingPersonZ;
-
-                        }
-                    }
-                    if (pushPersonCount % 2 != 0)
-                    {
-                        paddingX = -0.2f;
-                    }
-                    else
-                    {
-                        paddingX = 0.8f;
-
-                    }
-
-                    Vector3 target = new Vector3(carController.referToPerson.transform.position.x + paddingX,
-                                carController.referToPerson.transform.localPosition.y + 1,
-                                carController.referToPerson.transform.position.z + paddingZ);
-
-                    GameObject instance = Instantiate(pushPersonsPrefab[Random.Range(0,pushPersonsPrefab.Count)], 
-                                new Vector3(target.x,
-                                target.y,
-                                target.z - 5),
-                                Quaternion.identity, 
-                                GameObject.Find("PushPersons").transform);
-
-                    instance.GetComponent<PushPerson>().speedToMoveTarget = 
-                            (carController.pushAcceleration + pushForStraigh) / 90f;
-
-                    instance.GetComponent<PushPerson>().paddingX = paddingX;
-                    instance.GetComponent<PushPerson>().paddingZ = paddingZ;
-
-                    pushPersonsActive.Add(instance.GetComponent<PushPerson>());
+                    GeneratePushPerson(pushForStraigh);
+                    
                 }
                 break;
 
@@ -218,6 +179,10 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
+        if (time > 0 && pushPersonCount == 1)
+        {
+            GeneratePushPerson(pushForStraigh);
+        }
         carController.ApplyForce(pushForStraigh, pushForUphill, pushLimit);
     }
 
@@ -230,6 +195,59 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void GeneratePushPerson(float force)
+    {
+        pushPersonCount++;
+        if (pushPersonCount > 2)
+        {
+
+            paddingZ = accumulatorPaddingPersonZ;
+
+            if (pushPersonCount >= 4)
+            {
+                pushPersonCount = 2;
+                accumulatorPaddingPersonZ += accumulatorPaddingPersonZ;
+
+            }
+        }
+        if (pushPersonCount % 2 != 0)
+        {
+            paddingX = -0.2f;
+        }
+        else
+        {
+            paddingX = 0.8f;
+
+        }
+
+        Vector3 target = new Vector3(carController.referToPerson.transform.position.x + paddingX,
+                    carController.referToPerson.transform.localPosition.y + 1,
+                    carController.referToPerson.transform.position.z + paddingZ);
+
+        GameObject instance = Instantiate(pushPersonsPrefab[Random.Range(0, pushPersonsPrefab.Count)],
+                    new Vector3(target.x,
+                    target.y,
+                    target.z - 5),
+                    Quaternion.identity,
+                    GameObject.Find("PushPersons").transform);
+
+        if(pushPersonCount == 2)
+        {
+            instance.GetComponent<PushPerson>().speedToMoveTarget =
+                (carController.pushAcceleration + force) / 30f;
+        }
+        else
+        {
+            instance.GetComponent<PushPerson>().speedToMoveTarget =
+                (carController.pushAcceleration + force) / 90f;
+        }
+
+        instance.GetComponent<PushPerson>().paddingX = paddingX;
+        instance.GetComponent<PushPerson>().paddingZ = paddingZ;
+
+        pushPersonsActive.Add(instance.GetComponent<PushPerson>());
+    }
+
     public void GameOver()
     {
         foreach (var item in pushPersonsActive)
@@ -237,6 +255,8 @@ public class GameManager : MonoBehaviour
             item.AnimController.SetTrigger("OnDead");
             item.init = false;
         }
+
+        endGame = true;
     }
 
 }
